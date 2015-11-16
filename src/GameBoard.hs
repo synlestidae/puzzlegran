@@ -6,6 +6,11 @@ newtype Board = Board (Matrix Int) deriving Show
 
 data Move = MUp | MDown | MLeft | MRight
 
+step :: Board -> [Board]
+step board =
+	concat $ map (\(x, y, m) -> moveMarble board x y m) ([(x, y, move) | move <- [MUp, MDown, MLeft, MRight], 
+		x <- [1..7], y <- [1..7]])
+
 board :: Board
 board = Board (fromList 7 7 [
 	-1,-1,1,1,1,-1,-1,
@@ -39,7 +44,9 @@ rotateBy matrix n  = multStd rotationMatrix $ transpose (rotateBy matrix (n-1))
 
 moveMarble :: Board -> Int -> Int -> Move -> [Board]
 moveMarble (Board board) x y move 
-	| x >= 7 || y >= 7 || x < 0 || y < 0 = []
+	| x > 7 || y > 7 || x < 1 || y < 1 || 
+	  x' > 7 || y' > 7 || x' < 1 || y' < 1 || 
+	  x'' > 7 || y'' > 7 || x'' < 1 || y'' < 1 = []
 	| getElem x'' y'' board == 0 && getElem x' y' board == 1 &&
 		getElem x y board == 1 = [
 			Board (setElem 1 (x'',y'') $ setElem 0 (x', y') $  setElem 0 (x,y) board)
